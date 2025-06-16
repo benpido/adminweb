@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get web => const FirebaseOptions(
-        apiKey: 'YOUR_API_KEY',
-        authDomain: 'YOUR_PROJECT.firebaseapp.com',
-        projectId: 'YOUR_PROJECT',
-        storageBucket: 'YOUR_PROJECT.appspot.com',
-        messagingSenderId: 'YOUR_SENDER_ID',
-        appId: 'YOUR_APP_ID',
+        apiKey: 'AIzaSyCzpXEsuNxbNoywgoGfUOoYdWQbVp913t0',
+        authDomain: 'bullying-88362.firebaseapp.com',
+        projectId: 'bullying-88362',
+        storageBucket: 'bullying-88362.firebasestorage.app',
+        messagingSenderId: '337818312485',
+        appId: '1:337818312485:web:4feb1446f3bd89241884cc',
       );
 }
