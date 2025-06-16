@@ -4,8 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/users_page.dart';
-import 'pages/activations_page.dart';
-import 'pages/recordings_page.dart';
+import 'pages/history_page.dart';
 import 'pages/settings_page.dart';
 
 Future<void> main() async {
@@ -113,16 +112,14 @@ class _AdminPanelState extends State<AdminPanel> {
   static final _pages = [
     const DashboardPage(),
     const UsersPage(),
-    const ActivationsPage(),
-    const RecordingsPage(),
+    const HistoryPage(),
     const SettingsPage(),
   ];
 
   static const _titles = [
     'Dashboard',
     'Usuarios',
-    'Activaciones',
-    'Grabaciones',
+    'Historial',
     'Configuración',
   ];
 
@@ -198,8 +195,6 @@ class _AdminPanelState extends State<AdminPanel> {
         return const Icon(Icons.people);
       case 2:
         return const Icon(Icons.history);
-      case 3:
-        return const Icon(Icons.library_music);
       default:
         return const Icon(Icons.settings);
     }
