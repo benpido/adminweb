@@ -9,6 +9,7 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   final TextEditingController userController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController searchController = TextEditingController();
   final TextEditingController editController = TextEditingController();
   final List<Map<String, String>> users = [
@@ -26,10 +27,12 @@ class _UsersPageState extends State<UsersPage> {
 
   void _addUser() {
     final text = userController.text;
-    if (text.isNotEmpty) {
+    final password = passwordController.text;
+    if (text.isNotEmpty && password.isNotEmpty) {
       setState(() {
-        users.add({'name': text, 'role': 'subadmin'});
+        users.add({'name': text, 'role': 'subadmin', 'password': password});
         userController.clear();
+        passwordController.clear();
       });
     }
   }
@@ -76,6 +79,15 @@ class _UsersPageState extends State<UsersPage> {
                 controller: userController,
                 decoration:
                     const InputDecoration(labelText: 'Nuevo usuario'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: TextField(
+                controller: passwordController,
+                decoration:
+                    const InputDecoration(labelText: 'Contraseña'),
+                obscureText: true,
               ),
             ),
             const SizedBox(width: 8),
