@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -12,33 +13,26 @@ class _UsersPageState extends State<UsersPage> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController searchController = TextEditingController();
   final TextEditingController editController = TextEditingController();
-  final List<Map<String, String>> users = [
-    {'name': 'admin@example.com', 'role': 'admin'},
-    {'name': 'user@example.com', 'role': 'subadmin'},
-  ];
 
-  List<Map<String, String>> get filteredUsers {
-    final query = searchController.text.toLowerCase();
-    if (query.isEmpty) return users;
-    return users
-        .where((u) => u['name']!.toLowerCase().contains(query))
-        .toList();
-  }
+  CollectionReference<Map<String, dynamic>> get usersCollection =>
+      FirebaseFirestore.instance.collection('users');
 
-  void _addUser() {
+  Future<void> _addUser() async {
     final text = userController.text;
     final password = passwordController.text;
     if (text.isNotEmpty && password.isNotEmpty) {
-      setState(() {
-        users.add({'name': text, 'role': 'subadmin', 'password': password});
-        userController.clear();
-        passwordController.clear();
+      await usersCollection.add({
+        'name': text,
+        'role': 'subadmin',
+        'password': password,
       });
+      userController.clear();
+      passwordController.clear();
     }
   }
 
-  void _editUser(int index) {
-    editController.text = users[index]['name']!;
+  void _editUser(DocumentSnapshot<Map<String, dynamic>> doc) {
+    editController.text = doc['name'] ?? '';
     showDialog(
       context: context,
       builder: (context) {
@@ -47,10 +41,10 @@ class _UsersPageState extends State<UsersPage> {
           content: TextField(controller: editController),
           actions: [
             TextButton(
-              onPressed: () {
-                setState(() {
-                  users[index]['name'] = editController.text;
-                });
+              onPressed: () async {
+                await usersCollection
+                    .doc(doc.id)
+                    .update({'name': editController.text});
                 Navigator.of(context).pop();
               },
               child: const Text('Guardar'),
@@ -61,10 +55,8 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  void _deleteUser(int index) {
-    setState(() {
-      users.removeAt(index);
-    });
+  Future<void> _deleteUser(String id) async {
+    await usersCollection.doc(id).delete();
   }
 
   @override
@@ -102,26 +94,43 @@ class _UsersPageState extends State<UsersPage> {
         ),
         const SizedBox(height: 10),
         Expanded(
-          child: ListView.builder(
-            itemCount: filteredUsers.length,
-            itemBuilder: (context, index) {
-              final user = filteredUsers[index];
-              return ListTile(
-                title: Text(user['name']!),
-                subtitle: Text('Rol: ${user['role']}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () => _editUser(index),
+          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: usersCollection.snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              var docs = snapshot.data!.docs;
+              final query = searchController.text.toLowerCase();
+              if (query.isNotEmpty) {
+                docs = docs
+                    .where((d) =>
+                        (d['name'] ?? '').toLowerCase().contains(query))
+                    .toList();
+              }
+              return ListView.builder(
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final doc = docs[index];
+                  final user = doc.data();
+                  return ListTile(
+                    title: Text(user['name'] ?? ''),
+                    subtitle: Text('Rol: ${user['role']}'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _editUser(doc),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => _deleteUser(doc.id),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => _deleteUser(index),
-                    ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),
