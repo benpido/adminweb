@@ -57,32 +57,7 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text,
         password: passwordController.text,
       );
-      final otpOk = await showDialog<bool>(
-            context: context,
-            builder: (context) {
-              final controller = TextEditingController();
-              return AlertDialog(
-                title: const Text('Código 2FA'),
-                content: TextField(
-                  controller: controller,
-                  decoration:
-                      const InputDecoration(labelText: 'Ingrese el código'),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () =>
-                        Navigator.of(context).pop(controller.text == '123456'),
-                    child: const Text('Validar'),
-                  )
-                ],
-              );
-            },
-          ) ??
-          false;
-      if (!otpOk) {
-        await FirebaseAuth.instance.signOut();
-        setState(() => error = 'Código 2FA incorrecto');
-      }
+      // 2FA authentication removed
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         setState(() => error = 'Cuenta no encontrada');
