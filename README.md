@@ -14,3 +14,9 @@ El proyecto está pensado como punto de partida y las acciones no están conecta
 4. Lanza `firebase deploy` para publicar el contenido.
 
 La configuración de hosting está definida en `firebase.json`.
+
+## Contacto del administrador
+
+La información de contacto que se introduce en la sección de configuración se
+guarda también en Firestore en el documento `config/contact_info`. La aplicación
+móvil puede consultar esa ruta para mostrar estos datos al usuario.
