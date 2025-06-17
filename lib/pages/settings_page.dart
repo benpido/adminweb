@@ -44,11 +44,6 @@ class _SettingsPageState extends State<SettingsPage> {
       'email': user.email,
     });
 
-    await FirebaseFirestore.instance.collection('config').doc('contact_info').set({
-      'name': nameController.text,
-      'phone': phoneController.text,
-      'email': user.email,
-    });
     await _loadContactInfo();
     if (mounted) {
       ScaffoldMessenger.of(context)
