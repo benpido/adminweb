@@ -28,9 +28,12 @@ class _SettingsPageState extends State<SettingsPage> {
         .collection('admins')
         .doc(user.uid)
         .get();
+    if (!mounted) return;
     if (doc.exists) {
-      nameController.text = doc['name'] ?? '';
-      phoneController.text = doc['phone'] ?? '';
+      setState(() {
+        nameController.text = doc['name'] ?? '';
+        phoneController.text = doc['phone'] ?? '';
+      });
     }
   }
 
