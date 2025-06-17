@@ -15,6 +15,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  String loadedName = '';
+  String loadedPhone = '';
 
   @override
   void initState() {
@@ -26,8 +28,10 @@ class _SettingsPageState extends State<SettingsPage> {
     final info = await loadContactInfo();
     if (!mounted) return;
     setState(() {
-      nameController.text = info['name'] ?? '';
-      phoneController.text = info['phone'] ?? '';
+      loadedName = info['name'] ?? '';
+      loadedPhone = info['phone'] ?? '';
+      nameController.text = loadedName;
+      phoneController.text = loadedPhone;
     });
   }
 
@@ -82,6 +86,9 @@ class _SettingsPageState extends State<SettingsPage> {
         const SizedBox(height: 20),
         const Text('Contacto del administrador', style: TextStyle(fontSize: 18)),
         Text('Cuenta: ${FirebaseAuth.instance.currentUser?.email ?? ''}'),
+        Text('Nombre guardado: $loadedName'),
+        Text('Teléfono guardado: $loadedPhone'),
+        const SizedBox(height: 8),
         TextField(
           controller: nameController,
           decoration: const InputDecoration(labelText: 'Nombre'),
