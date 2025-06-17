@@ -24,23 +24,51 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _loadContactInfo() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-    final doc = await FirebaseFirestore.instance
+
+    final adminDoc = await FirebaseFirestore.instance
         .collection('admins')
         .doc(user.uid)
         .get();
+
+    final globalDoc = await FirebaseFirestore.instance
+        .collection('config')
+        .doc('contact_info')
+        .get();
+
     if (!mounted) return;
-    if (doc.exists) {
-      setState(() {
-        nameController.text = doc['name'] ?? '';
-        phoneController.text = doc['phone'] ?? '';
-      });
+
+    String? name;
+    String? phone;
+
+    if (adminDoc.exists) {
+      name = adminDoc['name'];
+      phone = adminDoc['phone'];
     }
+
+    if ((name == null || name.isEmpty) && globalDoc.exists) {
+      name = globalDoc['name'];
+    }
+
+    if ((phone == null || phone.isEmpty) && globalDoc.exists) {
+      phone = globalDoc['phone'];
+    }
+
+    setState(() {
+      nameController.text = name ?? '';
+      phoneController.text = phone ?? '';
+    });
   }
 
   Future<void> _saveContactInfo() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
     await FirebaseFirestore.instance.collection('admins').doc(user.uid).set({
+      'name': nameController.text,
+      'phone': phoneController.text,
+      'email': user.email,
+    });
+
+    await FirebaseFirestore.instance.collection('config').doc('contact_info').set({
       'name': nameController.text,
       'phone': phoneController.text,
       'email': user.email,
