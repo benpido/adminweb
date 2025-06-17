@@ -49,6 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
       'phone': phoneController.text,
       'email': user.email,
     });
+    await _loadContactInfo();
     if (mounted) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Información guardada')));
