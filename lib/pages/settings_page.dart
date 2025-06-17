@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../utils/contact_info.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -22,40 +23,11 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _loadContactInfo() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    final adminDoc = await FirebaseFirestore.instance
-        .collection('admins')
-        .doc(user.uid)
-        .get();
-
-    final globalDoc = await FirebaseFirestore.instance
-        .collection('config')
-        .doc('contact_info')
-        .get();
-
+    final info = await loadContactInfo();
     if (!mounted) return;
-
-    String? name;
-    String? phone;
-
-    if (adminDoc.exists) {
-      name = adminDoc['name'];
-      phone = adminDoc['phone'];
-    }
-
-    if ((name == null || name.isEmpty) && globalDoc.exists) {
-      name = globalDoc['name'];
-    }
-
-    if ((phone == null || phone.isEmpty) && globalDoc.exists) {
-      phone = globalDoc['phone'];
-    }
-
     setState(() {
-      nameController.text = name ?? '';
-      phoneController.text = phone ?? '';
+      nameController.text = info['name'] ?? '';
+      phoneController.text = info['phone'] ?? '';
     });
   }
 
