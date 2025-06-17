@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/contact_info.dart';
 
 class ActivationsPage extends StatefulWidget {
   const ActivationsPage({super.key});
@@ -42,13 +43,23 @@ class _ActivationsPageState extends State<ActivationsPage> {
                 subtitle: Text('${act['user']} - Estado: ${act['status']}'),
                 trailing: IconButton(
                   icon: const Icon(Icons.info_outline),
-                  onPressed: () {
+                  onPressed: () async {
+                    final info = await loadContactInfo();
+                    if (!context.mounted) return;
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
                           title: const Text('Detalle de activación'),
-                          content: const Text('Mapa y datos de contacto'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Nombre: ${info['name']}'),
+                              Text('Teléfono: ${info['phone']}'),
+                              Text('Email: ${info['email']}'),
+                            ],
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
