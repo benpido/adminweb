@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'pages/dashboard_page.dart';
-import 'pages/users_page.dart';
 import 'pages/history_page.dart';
 import 'pages/settings_page.dart';
 
@@ -111,14 +110,12 @@ class _AdminPanelState extends State<AdminPanel> {
 
   static final _pages = [
     const DashboardPage(),
-    const UsersPage(),
     const HistoryPage(),
     const SettingsPage(),
   ];
 
   static const _titles = [
     'Dashboard',
-    'Usuarios',
     'Historial',
     'Configuración',
   ];
@@ -192,8 +189,6 @@ class _AdminPanelState extends State<AdminPanel> {
       case 0:
         return const Icon(Icons.dashboard);
       case 1:
-        return const Icon(Icons.people);
-      case 2:
         return const Icon(Icons.history);
       default:
         return const Icon(Icons.settings);
